@@ -1,6 +1,6 @@
 ---
 title: "PECMM020"
-author: "Chukwudi Okere G"
+author: "OKERE CHUKWUDI GAMELIAL"
 date: "2023-04-25"
 output: html_document
 ---
