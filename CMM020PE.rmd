@@ -1,0 +1,266 @@
+---
+title: "CMM020PE"
+author: "Chukwudi Okere"
+date: "2023-04-01"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+```
+
+# Loading the first 3 data sets
+
+```{r}
+ProvenOilReservesZerosT<- read.csv("ProvenOilReservesZerosT.csv", header =T, stringsAsFactors = T )
+
+ProvenOilReserveWEurope<- read.csv("ProvenOilReserveWEurope.csv", header =T, stringsAsFactors =T )
+channels<-read.csv("channels.csv", header =T, stringsAsFactors =T )
+```
+
+
+
+# TASK 1.
+
+```{r}
+p <- ggplot(ProvenOilReservesZerosT,aes(x=MTBarrels, y= Denmark))
+p<-p + geom_point(shape=22,color="darkblue",fill="blue", size=4)
+p<-p + labs(title ="Proven Oil Reserve in Denmark(Milliontons ton barrels)", x="Year", y="proven oil Reserve",size ="Amount")
+p
+
+```
+
+### Discuss the quality of the visualization above and what the vidualisation suggest?
+
+ Answer: Using sqaure for the points is not very usefull as it clutters the graph. The plot shows an increase in the proven oil reserve till 2005.
+
+
+
+```{r}
+p <- ggplot(ProvenOilReservesZerosT,aes(x=MTBarrels, y= Denmark))
+p<-p + geom_point(shape=22,color="darkblue",fill="blue", size=4)
+p<-p + labs(title ="Proven Oil Reserve in Denmark(Milliontons ton barrels)", x="Year", y="proven oil Reserve",size ="Amount")
+p<-p + geom_vline(xintercept =1990,  )
+p<-p + geom_vline(xintercept =2005, )
+p
+```
+
+## Comment on whether similar conclusions would have been made if the data available was for the period of 1990-2005
+
+  Answer: The decline in proven oil reserve would not have been visible from the plot if data available was only for 1990-2005.
+
+
+
+# TASK 2.
+
+```{r}
+p<-ggplot(channels,aes(x=n))
+p <- p + geom_line(aes(y=electric, color= "electric current"))
+p<-p + geom_line(aes(y= length, color="Object length"))
+p<-p + geom_line(aes(y= area, color= "Object area"))
+p<- p + labs(title="stimuli vs sensation", x="size of stimuli", y="size of sensation"
+             , color="channels")
+p
+```
+
+### Analysis of the Graph: 
+
+The electric current shows the highest size of sensation. There is no way to show the clear difference between Object area and Object length.
+
+### To fully appreciate the diference in size of sensation between the, stimuli the Y axis will be limited to 50.
+
+```{r}
+p <- p + ylim(0,50)
+p
+```
+
+ The plot clearly shows the difference between the three lines.
+
+
+
+# TASK 3.
+
+## Discuss the quality of the visualisation that you have produced and interpret the results obtained.
+
+```{r}
+p<- ggplot(ProvenOilReserveWEurope,aes(x=Year,y=MT.Barrels, group=Country ))
+p<-p + geom_line(aes(color=Country))  
+p<-p + labs(title ="Proven oil reserve in West Europe(million tons barrels)", x="year", y="Proven Oil Reserve")
+p
+```
+
+ This is a good vidualization. The plots shows that Norway has the highest proven oil reserve followed by Uk in Western Europe. The plot between Italy and Denmark does not show clear difference. The plot shows that different countries have different trends,eg.Norway has an increase during the first few years while Uk has a degrease of Oil reserve during the first few years.
+
+
+
+# TASK 4
+
+### Discuss the visualisation obtained?
+
+```{r}
+p<-ggplot(ProvenOilReserveWEurope,aes(x=Year))
+p<- p + geom_tile(aes(y=MT.Barrels, color=Country, fill = Country))
+p<- p + facet_grid(Country ~ ., )
+p <-p + labs(title = "Proven oil reserve in West Europe", x="year", y="millions tons barrels of oil equivalent")
+p
+```
+
+### Answer of the above: 
+
+ All subplots have the same y axis scale While this makes it easy to compare large amounts of proven oil reserves vs smaller ones (e.g. Norway vs Italy), it makes it very difficult to compare similar-size data (e.g. Denmark vs Italy).The legend is not really needed. Using a free y axis would help to overcome this problem, but it will make it more difficult to compare large vs. small amounts.
+
+# Loading the data
+
+```{r}
+OilQuality <- read.csv("OilQuality.csv", header = T, stringsAsFactors =T )
+OilQuality
+```
+
+
+# TASK 5
+
+### 5.calculate the correlation and coveriance between the price and the API gravity.
+
+### For correlation
+
+```{r}
+cor.API.Price <-cor(OilQuality$API,OilQuality$Price)
+cor.API.Price
+```
+
+ The correlation coefficient is very close to 1, so its has a positive relationship or suggesting a positive assosciation.
+
+
+### For Coveriance
+
+```{r}
+cov.API.Price <- cov(OilQuality$API, OilQuality$Price)
+cov.API.Price
+```
+
+ The coverance has a positive relationship or association but the strenght of the relationship is unclear , therefore its not as useful.
+
+
+# TASK 6
+
+#### Produce a scatterplot of price against API gravity, including a straight line fit to the data. Comment on your plot.
+```{r}
+p <- ggplot(OilQuality,aes(x= API, y= Price))
+p <- p + geom_point() 
+p <- p + stat_smooth(method ="lm",se=F, formula = y ~ x, colour="red", )
+p<- p + labs(title ="Linear fit to OIL price vs API gravity", x="API gravity", y="Price")
+p
+```
+
+### Comment on your plot: 
+
+The relationship appears to be linear.the points are arranged close to the line. It's positive, as the API gravity of oil increases, the price (Dollars per Barrel) also increases. The line fits the data quite well, the curve in the shape of the data is "s" shape.. A different kind of fitting may be different thatn a linear one.
+
+
+
+# TASK 7
+
+### Calculate a linear regression of Price (response) on API gravity (predictor) and display the summary of the results,
+### State the equation of the regression line and the coefficient of determination.
+### Two new batches of oil have API gravities of 35.5 and 45.1. Predict the selling price of each. Comment on the validity of these predictions.
+
+```{r}
+lm.output <- lm(formula = Price~API, data = OilQuality)
+lm.output
+```
+
+
+### Summary of results
+
+```{r}
+summary(lm.output)
+```
+
+### Stating the equation of the regression
+
+```{r}
+# Price <- 8.772568+0.117737*API
+
+```
+
+
+### OR Sqaure the correletion coefficient ('Multiple R-squared')
+
+```{r}
+Price <- cor.API.Price * cor.API.Price
+Price
+```
+
+
+### predicting the selling price of API gravity 35.5 and 45.5
+
+### The equation of the regression line and the coefficient of determination.
+
+```{r}
+
+predict(lm.output, newdata = data.frame(API = c(35.5, 45.5)))
+```
+
+The first coefficient of determination  12.95222 for the selling price of API 35.5 is ok
+     While the second result 14.12959 for the selling price of API 45.5 is outrageous and dubious extrapolation.
+  
+  
+     
+# TASK 8
+
+# Read file UKdata.csv
+
+```{r}
+UKdata <- read.csv("UKData.csv", header = T,stringsAsFactors = T)
+UKdata
+```
+
+## Add a new column to UKData called bigProducerOil which states whether that month the operator was producing more oil (OPUKShare) than the average OPUKShare for the year. How many instances of the operator producing more than average are there?
+
+
+
+
+# TASK 9
+
+## Run an experiment to analyse the true mean for AGPUKS. You want to check whether it is greater than each of the following 3 values: 12000, 10000 and 8000. Justify your answers at 95% confidence level.
+
+### True mean of 12000
+
+```{r}
+t.test(UKdata$AGPUKS, alternative = "greater", paird=F, mu= 12000, conf.level=0.95)
+```
+
+ The p-value 0.3794 is far greater than 0.05. The NULL hybothesis (true mean is 12000) Ho stands and cannot be rejected.
+
+
+### True mean of 10000
+
+```{r}
+t.test(UKdata$AGPUKS, conf.level=0.95, mu=10000, alternative="greater")
+```
+
+ The p-value 0.1461 is greater than 0.05. The NULL hypothesis Ho(true mean is 10000) stands and cannot be rejected.
+
+
+### The true mean of 8000
+
+```{r}
+t.test(UKdata$AGPUKS, conf.level=0.95, mu=8000, alternative="greater")
+```
+
+ The p-value 0.03745 is lower than 0.05, Therefore the NULL hypothesis Ho (true mean 8000) is rejected. The alternative hypothesis (true mean is greater than 8000) stands.
+
+
+
+# TASK 10
+
+###    whether there is a statistically significant difference in Oil Production based on the operator. Use a 95% confidence level.
+
+```{r}
+anova<- aov(OPUKShare ~ Operator, data = UKdata)
+summary(anova)
+```
+
+ The pr(>F) is very small, therefore the NULL hypothesis(mean of OKPUShare are the same regardless of the Opeartor). There is a difference in the means.
+
