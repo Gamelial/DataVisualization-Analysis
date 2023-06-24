@@ -1,0 +1,189 @@
+---
+title: "PECMM020"
+author: "Atieno"
+date: "2023-04-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+rm(list = ls())
+```
+
+```{r}
+library(tidyverse)
+```
+
+# loading the data sets
+
+```{r}
+arrivals <- read.csv("arrivals.csv", header = T, stringsAsFactors = T)
+numbersPerDay <- read.csv("numbersPerDay.csv", header = T, stringsAsFactors = T)
+vessel <- read.csv ("vessel.csv", header = T, stringsAsFactors = T)
+
+```
+
+
+# Task 3
+
+#### calling the data set
+
+```{r}
+arrivals <- read.csv("arrivals.csv", header = T, stringsAsFactors = T)
+arrivals
+```
+
+#### Analysing for Arrivals
+
+```{r}
+p <- ggplot(arrivals,aes(x = Flag, y = Draft))
+p <- p + geom_point( colour = "skyblue1")
+p <- p + labs(title = "Harbour Ship arrivals Flags of different Countries vs Draft 2022", x = "Country Flag" , y = "Draft" )
+p
+```
+
+The dot plot shows that Liberia and Malta has the highest Draft, followed by "Cy"
+The goem_point does not really show a good representation of the data at the it a bit difficult to differentiate the datas.
+
+```{r}
+p <- ggplot(arrivals,aes(x = Flag, y = Draft))
+p <- p + geom_line( colour = "tomato")
+p <- p + labs(title = "Harbour Ship arrivals Flags of different Countries vs Draft 2022", x = "Country Flag" , y = "Draft" )
+p <- p + ylim(3,20)
+p
+```
+
+The dot plot shows that Liberia and Malta has the highest Draft, followed by "Cy"
+The goem_line is not  good representation of this data as it is difficult to different them
+
+
+```{r}
+p <- ggplot(arrivals,aes(x = Flag, y = Draft))
+p <- p + geom_bar(width = 1, stat="identity", colour = "coral3")
+p <- p + labs(title = "Harbour Ship arrivals Flags of different Countries vs Draft 2022", x = "Country Flag" , y = "Draft" )
+p
+```
+The Bar chat shows that Liberia and Malta has the highest Draft, followed by "Cy" and the Countries with the flag "TN" and "NO" has the lowest Draft.
+The Bar chat is the best representation of the data as it shows a good and more clear difference of the data distribution.
+ 
+ 
+
+#### Analysing for vessel
+
+#### calling the dataset
+
+```{r}
+vessel <- read.csv("vessel.csv", header = T, stringsAsFactors = T)
+vessel
+```
+
+
+```{r}
+p <- ggplot(vessel,aes(x = Flag, y = Draft))
+p <- p + geom_point( colour = "skyblue1")
+p <- p + labs(title = "Vessels of different Countries vs Draft 2022", x = "Country Flag" , y = "Draft" )
+p
+```
+
+The data shows that Lithuania and Malta have the highest vehicles of above 1500, but Malta has the highest number of vehicle. While the country with the flag "TN" and "LT" have the lowest number of vehicles.
+The geom_point chat shows a good representation of the data but BAR chat will be preferable as the differences are somehow confusing.
+
+```{r}
+p <- ggplot(vessel,aes(x = Flag, y = Draft))
+p <- p + geom_line( colour = "tomato")
+p <- p + labs(title = "Vessels of different Countries vs Draft 2022", x = "Country Flag" , y = "Draft" )
+p <- p + ylim(3,20)
+p
+```
+
+The data shows that Lithuania and Malta have the highest vehicles of above 1500, but Malta has the highest number of vehicle. While the country with the flag "TN" and "LT" have the lowest number of vehicles.
+The Line plot does not show a good representation of the data as it is difficult to dictate the differences.
+
+
+```{r}
+p <- ggplot(vessel,aes(x = Flag, y = Draft))
+p <- p + geom_bar(width = 1, stat="identity", colour = "coral3")
+p <- p + labs(title = "Vessels of different Countries vs Draft 2022", x = "Country Flag" , y = "Draft" )
+p
+```
+
+The data shows that Lithuania and Malta have the highest vessels of above 1500, but Malta has the highest number of vehicle. While the country with the flag "TN" and "LT" have the lowest number of vessels.
+The Bar chat shows a good representation of the data.
+
+
+Therefore I observed that the distributions compare between the 2 dataset indicates that vessels shows the highest and lowest comprising of vessels of different countries while Arrivals shows the comprising between the arrivals.
+
+
+# Task 2
+
+#### calling the dataset
+
+```{r}
+numbersPerDay<- read.csv("numbersPerDay.csv", header = T, stringsAsFactors = T)
+numbersPerDay
+```
+
+#### Using numberPerDay dataset
+
+```{r}
+p <- ggplot(numbersPerDay,aes(x = Day ))
+p <- p + geom_line(aes(y =ArrivalNumber, colour = DayName ))
+p <- p + labs(title= "Number of arrivals per day vs per day of the week", x = "Per day of the week", y = "number of arrival per day")
+p <- p + ylim(0,30)
+p
+```
+
+the data shows that there are higher number of arrival at the early days of the week.
+The graph is not rally show a good representation.
+
+
+#### Using vessel dataset
+
+```{r}
+p <- ggplot(vessel,aes(x = Draft, y =Beam))
+p <- p + geom_point(colour = "red")
+p <- p + labs(title= "Beam vs Draft", x = "Draft", y = "Beam")
+p
+```
+
+The data shows that they are more clustered  at the early part of the beam as it increases with the Drafts and became less clustered around number "35" of the Beam. It is a clustered data representation. Line plot would have been more better.
+
+
+# Task 3
+
+### checking the correlation
+
+```{r}
+cor <- cor(vessel$Beam,vessel$Length)
+cor
+```
+The correlation coefficient is greater than 0.05 p-value. It shows a strong and positive association between them.It is suitable.
+
+
+#### Prediciting the Beam
+
+```{r}
+lm.output<-lm(formula= Beam~Length,data=vessel)
+summary(lm.output) 
+```
+
+ The linear equation for Beam = 4.933085 + 0.123537*Length
+ 
+ The coefficient of determination is Multiple R-squared:  0.8689
+
+ 
+#### Performing Further checks for suitability
+ 
+```{r}
+p <- ggplot(vessel,aes(x=Beam,y=Length))
+p <- p + geom_point(colour= "red" ) + stat_smooth(method="lm",formual= y~x,  se=F)
+p <- p + labs(title = "Length vs Beam", x ="Beam", y ="Length")
+p
+```
+ 
+ The points are close to the theoretical lines. The points are more clustered at the early stage of the Length and Beam and became few as the Beam increases with the Length. The data shows a positive association. Therefore I would say it is suitable.
+ 
